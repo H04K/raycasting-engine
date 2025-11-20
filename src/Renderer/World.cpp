@@ -40,3 +40,51 @@ uint32_t FindSectorOfPoint(Vector2 point, const World &world)
 
     return NULL_SECTOR;
 }
+
+// Entity management implementations
+EntityID World::AddEntity(const Entity& entity)
+{
+    EntityID id = nextEntityId++;
+    Entity newEntity = entity;
+    newEntity.id = id;
+    Entities[id] = newEntity;
+    return id;
+}
+
+void World::RemoveEntity(EntityID id)
+{
+    Entities.erase(id);
+}
+
+Entity* World::GetEntity(EntityID id)
+{
+    auto it = Entities.find(id);
+    if (it != Entities.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+const Entity* World::GetEntity(EntityID id) const
+{
+    auto it = Entities.find(id);
+    if (it != Entities.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+std::vector<Entity*> World::GetEntitiesInSector(SectorID sectorId)
+{
+    std::vector<Entity*> result;
+    for (auto& [id, entity] : Entities)
+    {
+        if (entity.currentSectorId == sectorId)
+        {
+            result.push_back(&entity);
+        }
+    }
+    return result;
+}

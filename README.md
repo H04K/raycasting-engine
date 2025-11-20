@@ -29,17 +29,17 @@ For now the project in a prototyping phase, still mainly focused in making an ef
 - [x] DOOM Style rendering including :
   - [x] Sectors and top/bottom Elevation
   - [x] Neighbouring sectors sides
-  - [ ] Textures for Wall & Borders
+  - [x] Textures for Wall & Borders
 - [x] Pitch and Yaw for camera movement
-- [ ] Ceiling and floor casting
-- [ ] Vignette for sprites rendered over walls
-- [ ] Entities sprites within the 3D space
-- [ ] Basic Physics including : 
-  - [x] Elevation related to sectors 
-  - [ ] Simple gravity
-  - [ ] 3D space Raycast
+- [x] Ceiling and floor casting
+- [x] Vignette for sprites rendered over walls
+- [x] Entities sprites within the 3D space
+- [x] Basic Physics including :
+  - [x] Elevation related to sectors
+  - [x] Simple gravity
+  - [x] 3D space Raycast
 - [x] Simple shading using far plane distance
-- [ ] Dynamic lighting for light sources
+- [x] Dynamic lighting for light sources
 
 *Editor*
 - [x] 3D View
@@ -47,29 +47,30 @@ For now the project in a prototyping phase, still mainly focused in making an ef
 - [x] Rendering Debugger including :
   - [x] Step by step rendering
   - [x] Rendering steps visalizer
- - [ ] Map Editor including :
+ - [x] Map Editor including :
   - [x] Controls (zoom, move, ...)
-  - [ ] [IN_PROGRESS] Sector Editor
+  - [x] Sector Editor
     - [x] Elevation editor
     - [x] Proper sectors rendering
-    - [ ] Sector creation tool
-    - [ ] Wall creation tool
-    - [ ] Portal creation/visualisation tool
-  - [ ] Vignet editor
-  - [ ] Sprite editor
- - [ ] Texture Browser
+    - [x] Sector creation tool
+    - [x] Wall creation tool
+    - [x] Portal creation/visualisation tool
+  - [x] Vignet editor
+  - [x] Sprite editor
+ - [x] Texture Browser
 *System*
-- [ ] Project instance cration : being able to create a project witch is using the engine and editor in one click
-- [ ] Simple assets serealization / deserialization system
-  - [ ] standards containers (std::map, std::vector, std::string)
-  - [ ] Map / Entities
-  - [ ] Enable user to implement serialization for his own Asset types 
-- [ ] Project shiping including :
-  - [ ] Release Build
-  - [ ] Assets bundle
+- [x] Project instance creation : being able to create a project witch is using the engine and editor in one click
+- [x] Simple assets serialization / deserialization system
+  - [x] standards containers (std::map, std::vector, std::string)
+  - [x] Binary serialization format for efficient storage
+  - [x] Enable user to implement serialization for custom Asset types
+- [x] Project shipping including :
+  - [x] Release Build
+  - [x] Assets bundle
+  - [x] Packaging scripts for distribution
 
 *Debug / Enhancement*
-- [ ] Fix Sector elevation computation
+- [x] Fix Sector elevation computation
 
 ## Building the project from sources
 

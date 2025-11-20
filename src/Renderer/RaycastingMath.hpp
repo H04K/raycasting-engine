@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "Utils/ColorHelper.hpp"
+#include "Renderer/TextureManager.hpp"
 
 inline Vector2 Vector2DirectionFromAngle(float angleRadian, float length = 1)
 {
@@ -37,6 +38,8 @@ struct Wall
     Segment segment;
     SectorID toSector = NULL_SECTOR;
     Color color = WHITE;
+    TextureID textureId = NULL_TEXTURE;
+    float textureScale = 1.0f; // Texture scaling factor
 };
 
 struct Sector
@@ -48,6 +51,12 @@ struct Sector
     Color bottomBorderColor = MY_RED;
     float zCeiling = 1;
     float zFloor = 1;
+    TextureID floorTextureId = NULL_TEXTURE;
+    TextureID ceilingTextureId = NULL_TEXTURE;
+    TextureID topBorderTextureId = NULL_TEXTURE;
+    TextureID bottomBorderTextureId = NULL_TEXTURE;
+    float floorTextureScale = 1.0f;
+    float ceilingTextureScale = 1.0f;
 };
 
 struct RasterRay
