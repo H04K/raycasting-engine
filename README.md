@@ -47,19 +47,19 @@ For now the project in a prototyping phase, still mainly focused in making an ef
 - [x] Rendering Debugger including :
   - [x] Step by step rendering
   - [x] Rendering steps visalizer
- - [ ] Map Editor including :
+ - [x] Map Editor including :
   - [x] Controls (zoom, move, ...)
-  - [ ] [IN_PROGRESS] Sector Editor
+  - [x] Sector Editor
     - [x] Elevation editor
     - [x] Proper sectors rendering
-    - [ ] Sector creation tool
-    - [ ] Wall creation tool
-    - [ ] Portal creation/visualisation tool
-  - [ ] Vignet editor
-  - [ ] Sprite editor
- - [ ] Texture Browser
+    - [x] Sector creation tool
+    - [x] Wall creation tool
+    - [x] Portal creation/visualisation tool
+  - [x] Vignet editor
+  - [x] Sprite editor
+ - [x] Texture Browser
 *System*
-- [ ] Project instance creation : being able to create a project witch is using the engine and editor in one click
+- [x] Project instance creation : being able to create a project witch is using the engine and editor in one click
 - [x] Simple assets serialization / deserialization system
   - [x] standards containers (std::map, std::vector, std::string)
   - [x] Binary serialization format for efficient storage
