@@ -39,6 +39,10 @@ private:
     Color portalConnectionColor = GREEN;
     Color solidWallColor = RED;
 
+    // GUI request flags
+    bool createPortalRequested = false;
+    bool removePortalRequested = false;
+
     void RenderPortalConnections(const World& world) const;
     void RenderWallHighlight(const Wall& wall, Color color) const;
 };

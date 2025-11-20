@@ -17,7 +17,7 @@ struct TextureEntry
 class TextureBrowser
 {
 public:
-    TextureBrowser() = default;
+    TextureBrowser();
 
     void DrawGUI();
     void Update();

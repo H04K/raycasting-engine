@@ -53,5 +53,8 @@ private:
     bool snapToGrid = true;
     float gridSize = 50.0f;
 
+    // GUI request flags
+    bool completeSectorRequested = false;
+
     Vector2 SnapToGrid(Vector2 pos) const;
 };

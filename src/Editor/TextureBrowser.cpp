@@ -2,6 +2,11 @@
 #include <imgui.h>
 #include <rlImGui.h>
 
+TextureBrowser::TextureBrowser()
+{
+    LoadDefaultTextures();
+}
+
 void TextureBrowser::Update()
 {
     if (!isActive) return;

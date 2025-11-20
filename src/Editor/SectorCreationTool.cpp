@@ -29,10 +29,11 @@ void SectorCreationTool::Update(float dt, WorldEditor& editor)
         RemoveLastPoint();
     }
 
-    // Press Enter to complete sector
-    if (IsKeyPressed(KEY_ENTER) && points.size() >= 3)
+    // Press Enter to complete sector or check GUI button request
+    if ((IsKeyPressed(KEY_ENTER) || completeSectorRequested) && points.size() >= 3)
     {
         CompleteSector(editor.world);
+        completeSectorRequested = false;
     }
 
     // Press Escape to cancel
@@ -113,7 +114,7 @@ void SectorCreationTool::DrawGUI()
             ImGui::SameLine();
             if (ImGui::Button("Complete Sector"))
             {
-                // Will be called with world reference
+                completeSectorRequested = true;
             }
         }
     }

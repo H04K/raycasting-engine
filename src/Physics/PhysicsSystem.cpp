@@ -1,4 +1,5 @@
 #include "Physics/PhysicsSystem.hpp"
+#include "EngineConstants.hpp"
 #include <algorithm>
 
 void PhysicsSystem::Update(World& world, float deltaTime)
@@ -56,11 +57,11 @@ void PhysicsSystem::UpdateCamera(RaycastingCamera& camera, const World& world, f
     if (camera.currentSectorId != NULL_SECTOR)
     {
         const Sector& sector = world.Sectors.at(camera.currentSectorId);
-        float floorHeight = sector.zFloor * 1000.0f; // Assuming 1000 units = full height
-        float ceilingHeight = sector.zCeiling * 1000.0f;
+        float floorHeight = sector.zFloor * EngineConstants::HEIGHT_SCALE;
+        float ceilingHeight = sector.zCeiling * EngineConstants::HEIGHT_SCALE;
 
         // Keep camera within sector bounds
-        camera.elevation = Clamp(camera.elevation, floorHeight + 50.0f, ceilingHeight - 50.0f);
+        camera.elevation = Clamp(camera.elevation, floorHeight + EngineConstants::DEFAULT_PLAYER_HEIGHT, ceilingHeight - EngineConstants::DEFAULT_PLAYER_HEIGHT);
     }
 }
 
@@ -128,7 +129,7 @@ bool PhysicsSystem::IsGrounded(const RaycastingCamera& camera, const World& worl
     if (camera.currentSectorId == NULL_SECTOR) return false;
 
     const Sector& sector = world.Sectors.at(camera.currentSectorId);
-    float floorHeight = sector.zFloor * 1000.0f;
+    float floorHeight = sector.zFloor * EngineConstants::HEIGHT_SCALE;
     return fabsf(camera.elevation - floorHeight) < config.groundSnapDistance;
 }
 
@@ -140,16 +141,16 @@ float PhysicsSystem::GetFloorHeight(Vector2 position, SectorID sectorId, const W
     if (it == world.Sectors.end()) return 0.0f;
 
     const Sector& sector = it->second;
-    return sector.zFloor * 1000.0f; // Convert normalized height to world units
+    return sector.zFloor * EngineConstants::HEIGHT_SCALE;
 }
 
 float PhysicsSystem::GetCeilingHeight(Vector2 position, SectorID sectorId, const World& world)
 {
-    if (sectorId == NULL_SECTOR) return 1000.0f;
+    if (sectorId == NULL_SECTOR) return EngineConstants::HEIGHT_SCALE;
 
     auto it = world.Sectors.find(sectorId);
-    if (it == world.Sectors.end()) return 1000.0f;
+    if (it == world.Sectors.end()) return EngineConstants::HEIGHT_SCALE;
 
     const Sector& sector = it->second;
-    return sector.zCeiling * 1000.0f; // Convert normalized height to world units
+    return sector.zCeiling * EngineConstants::HEIGHT_SCALE;
 }

@@ -6,7 +6,29 @@
 #include "Renderer/WorldRasterizer.hpp"
 #include "Renderer/RaycastingMath.hpp"
 #include "Utils/ColorHelper.hpp"
+#include "EngineConstants.hpp"
 #include "WorldRasterizer.hpp"
+
+// Performance optimization: Direct pixel access helper
+inline Color GetPixelFast(const Image& image, int x, int y)
+{
+    if (!image.data) return BLACK;
+
+    Color* pixels = static_cast<Color*>(image.data);
+    int index = y * image.width + x;
+    return pixels[index];
+}
+
+// Performance optimization: Fast color multiplication (bit shift instead of division)
+inline Color ApplyTintFast(Color pixel, Color tint)
+{
+    return {
+        static_cast<unsigned char>((pixel.r * tint.r) >> EngineConstants::COLOR_SHIFT),
+        static_cast<unsigned char>((pixel.g * tint.g) >> EngineConstants::COLOR_SHIFT),
+        static_cast<unsigned char>((pixel.b * tint.b) >> EngineConstants::COLOR_SHIFT),
+        static_cast<unsigned char>((pixel.a * tint.a) >> EngineConstants::COLOR_SHIFT)
+    };
+}
 
 void RasterizeInRenderArea(RasterizeWorldContext& ctx, SectorRenderContext renderContext)
 {
@@ -372,7 +394,7 @@ void RenderEntities(const World& world, const RaycastingCamera& cam, uint32_t re
         startY = Clamp(startY, 0, static_cast<int>(renderTargetHeight) - 1);
         endY = Clamp(endY, 0, static_cast<int>(renderTargetHeight) - 1);
 
-        // Render sprite billboard
+        // Render sprite billboard (OPTIMIZED)
         for (int x = startX; x <= endX; ++x)
         {
             for (int y = startY; y <= endY; ++y)
@@ -384,16 +406,14 @@ void RenderEntities(const World& world, const RaycastingCamera& cam, uint32_t re
                 int texX = static_cast<int>(u * spriteImage.width) % spriteImage.width;
                 int texY = static_cast<int>(v * spriteImage.height) % spriteImage.height;
 
-                Color pixelColor = GetImageColor(spriteImage, texX, texY);
+                // OPTIMIZATION: Direct memory access instead of GetImageColor
+                Color pixelColor = GetPixelFast(spriteImage, texX, texY);
 
                 // Skip transparent pixels
                 if (pixelColor.a < 10) continue;
 
-                // Apply tint
-                pixelColor.r = (pixelColor.r * entity.tint.r) / 255;
-                pixelColor.g = (pixelColor.g * entity.tint.g) / 255;
-                pixelColor.b = (pixelColor.b * entity.tint.b) / 255;
-                pixelColor.a = (pixelColor.a * entity.tint.a) / 255;
+                // OPTIMIZATION: Bit shift instead of division by 255
+                pixelColor = ApplyTintFast(pixelColor, entity.tint);
 
                 // Apply distance darkening
                 float normalizedDepth = Clamp(renderData.distance / cam.farPlaneDistance, 0.0f, 1.0f);
@@ -412,6 +432,10 @@ void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uin
     // Calculate ray angle for this column
     float rayAngle = RayAngleForScreenXCam(x, cam, ctx.RenderTargetWidth);
     float rayDir = (rayAngle * DEG2RAD) + cam.yaw;
+
+    // OPTIMIZATION: Pre-calculate trigonometric values (called many times in loops)
+    float rayDirCos = cosf(rayDir);
+    float rayDirSin = sinf(rayDir);
 
     float centerY = (ctx.RenderTargetHeight / 2.0f) - ctx.FloorVerticalOffset + ctx.CamCurrentSectorElevationOffset;
 
@@ -463,9 +487,9 @@ void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uin
 
         if (rowDistance < 0 || rowDistance > wallDistance) continue;
 
-        // Calculate floor point in world space
-        float floorX = cam.position.x + cosf(rayDir) * rowDistance;
-        float floorY = cam.position.y + sinf(rayDir) * rowDistance;
+        // Calculate floor point in world space (OPTIMIZED: pre-calculated trig)
+        float floorX = cam.position.x + rayDirCos * rowDistance;
+        float floorY = cam.position.y + rayDirSin * rowDistance;
 
         Color floorColor = sector.floorColor;
 
@@ -477,7 +501,8 @@ void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uin
             if (texX < 0) texX += floorImage.width;
             if (texY < 0) texY += floorImage.height;
 
-            floorColor = GetImageColor(floorImage, texX, texY);
+            // OPTIMIZATION: Direct memory access instead of GetImageColor
+            floorColor = GetPixelFast(floorImage, texX, texY);
         }
 
         // Apply distance-based darkening
@@ -498,9 +523,9 @@ void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uin
 
         if (rowDistance < 0 || rowDistance > wallDistance) continue;
 
-        // Calculate ceiling point in world space
-        float ceilingX = cam.position.x + cosf(rayDir) * rowDistance;
-        float ceilingY = cam.position.y + sinf(rayDir) * rowDistance;
+        // Calculate ceiling point in world space (OPTIMIZED: pre-calculated trig)
+        float ceilingX = cam.position.x + rayDirCos * rowDistance;
+        float ceilingY = cam.position.y + rayDirSin * rowDistance;
 
         Color ceilingColor = sector.ceilingColor;
 
@@ -512,7 +537,8 @@ void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uin
             if (texX < 0) texX += ceilingImage.width;
             if (texY < 0) texY += ceilingImage.height;
 
-            ceilingColor = GetImageColor(ceilingImage, texX, texY);
+            // OPTIMIZATION: Direct memory access instead of GetImageColor
+            ceilingColor = GetPixelFast(ceilingImage, texX, texY);
         }
 
         // Apply distance-based darkening
@@ -563,17 +589,14 @@ void RenderCameraYLineTextured(CameraYLineData renderData, TextureID textureId, 
 
         int texY = static_cast<int>(v) % texture.height;
 
-        // Sample texture color
-        Color texColor = GetImageColor(image, texX, texY);
+        // OPTIMIZATION: Direct memory access instead of GetImageColor
+        Color texColor = GetPixelFast(image, texX, texY);
 
         // Apply depth darkening
         Color finalColor = ColorDarken(texColor, renderData.normalizedDepth);
 
-        // Apply tint
-        finalColor.r = (finalColor.r * tint.r) / 255;
-        finalColor.g = (finalColor.g * tint.g) / 255;
-        finalColor.b = (finalColor.b * tint.b) / 255;
-        finalColor.a = (finalColor.a * tint.a) / 255;
+        // OPTIMIZATION: Bit shift instead of division by 255
+        finalColor = ApplyTintFast(finalColor, tint);
 
         DrawPixel(x, y, finalColor);
     }

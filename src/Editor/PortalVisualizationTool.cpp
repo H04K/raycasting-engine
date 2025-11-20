@@ -6,8 +6,60 @@ void PortalVisualizationTool::Update(float dt, WorldEditor& editor)
 {
     if (!isActive) return;
 
-    // Tool logic for selecting walls and creating portals
-    // This would involve mouse picking in the editor
+    // Handle wall selection with mouse (simplified - picks closest wall to mouse)
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        Vector2 mouseScreen = GetMousePosition();
+        Vector2 mouseViewport = editor.ScreenToViewportPosition(mouseScreen);
+        Vector2 mouseWorld = editor.ScreenToWorldPosition(mouseViewport);
+
+        // Find closest wall to mouse position
+        float closestDist = 50.0f; // Max selection distance
+        Wall* closestWall = nullptr;
+        SectorID closestSector = NULL_SECTOR;
+        size_t closestWallIdx = 0;
+
+        for (auto& [sectorId, sector] : editor.world.Sectors)
+        {
+            for (size_t i = 0; i < sector.walls.size(); ++i)
+            {
+                Wall& wall = sector.walls[i];
+                Vector2 midpoint = {
+                    (wall.segment.a.x + wall.segment.b.x) / 2.0f,
+                    (wall.segment.a.y + wall.segment.b.y) / 2.0f
+                };
+
+                float dist = Vector2Distance(mouseWorld, midpoint);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestWall = &wall;
+                    closestSector = sectorId;
+                    closestWallIdx = i;
+                }
+            }
+        }
+
+        if (closestWall != nullptr)
+        {
+            selectedWall = closestWall;
+            selectedSectorId = closestSector;
+            selectedWallIndex = closestWallIdx;
+        }
+    }
+
+    // Handle GUI button requests
+    if (createPortalRequested)
+    {
+        CreatePortal(editor.world, selectedSectorId, selectedWallIndex, targetSectorId);
+        createPortalRequested = false;
+    }
+
+    if (removePortalRequested)
+    {
+        RemovePortal(editor.world, selectedSectorId, selectedWallIndex);
+        removePortalRequested = false;
+    }
 }
 
 void PortalVisualizationTool::Render(const World& world) const
@@ -66,14 +118,12 @@ void PortalVisualizationTool::DrawGUI()
 
         if (ImGui::Button("Create Portal"))
         {
-            // Create portal - needs world reference
-            ImGui::Text("Click in viewport to create portal");
+            createPortalRequested = true;
         }
 
         if (ImGui::Button("Remove Portal"))
         {
-            // Remove portal
-            ImGui::Text("Click wall to remove portal");
+            removePortalRequested = true;
         }
 
         ImGui::Separator();

@@ -6,6 +6,7 @@
 #include <string>
 #include "Renderer/TextureManager.hpp"
 #include "Renderer/RaycastingMath.hpp"
+#include "EngineConstants.hpp"
 
 using EntityID = uint32_t;
 constexpr EntityID NULL_ENTITY { static_cast<EntityID>(-1) };
@@ -34,8 +35,8 @@ struct Entity
     TextureID spriteTextureId = NULL_TEXTURE;
     bool isBillboard = true;         // Always face camera
     float spriteScale = 1.0f;        // Sprite scaling
-    float spriteWidth = 64.0f;       // Sprite width in world units
-    float spriteHeight = 64.0f;      // Sprite height in world units
+    float spriteWidth = EngineConstants::DEFAULT_SPRITE_WIDTH;
+    float spriteHeight = EngineConstants::DEFAULT_SPRITE_HEIGHT;
     Color tint = WHITE;
 
     // Physics
@@ -43,7 +44,7 @@ struct Entity
     float verticalVelocity = 0.0f;
     bool hasGravity = false;
     bool hasCollision = true;
-    float radius = 16.0f;            // Collision radius
+    float radius = EngineConstants::DEFAULT_ENTITY_RADIUS;
 
     // Gameplay
     SectorID currentSectorId = NULL_SECTOR;
