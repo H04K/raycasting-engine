@@ -4,6 +4,7 @@
 #include <vector>
 #include "Renderer/World.hpp"
 #include "Renderer/RaycastingMath.hpp"
+#include "Utils/ColorHelper.hpp"
 
 enum class SectorCreationMode
 {
