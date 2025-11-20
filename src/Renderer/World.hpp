@@ -1,8 +1,10 @@
 #pragma once
 
 #include <unordered_map>
+#include <vector>
 
 #include "RaycastingMath.hpp"
+#include "Entity.hpp"
 
 struct World
 {
@@ -82,6 +84,16 @@ struct World
             },
         },
     };
+
+    // Entity management
+    std::unordered_map<EntityID, Entity> Entities;
+    EntityID nextEntityId = 0;
+
+    EntityID AddEntity(const Entity& entity);
+    void RemoveEntity(EntityID id);
+    Entity* GetEntity(EntityID id);
+    const Entity* GetEntity(EntityID id) const;
+    std::vector<Entity*> GetEntitiesInSector(SectorID sectorId);
 
     void InitWorld();
 };

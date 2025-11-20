@@ -44,13 +44,15 @@ struct RasterizeWorldContext
 
 void RasterizeInRenderArea(RasterizeWorldContext& worldContext, SectorRenderContext renderContext);
 
-void RenderNextAreaBorders(RasterizeWorldContext& worldContext, MinMaxUint32& yMinMax, const Sector& currentSector, const Sector& nextSector, uint32_t x, float hitDistance);
+void RenderNextAreaBorders(RasterizeWorldContext& worldContext, MinMaxUint32& yMinMax, const Sector& currentSector, const Sector& nextSector, uint32_t x, float hitDistance, const Wall* wall, const Vector2& hitPosition);
 struct CameraYLineData
 {
     Vector2 top;
     Vector2 bottom;
     float depth = 0;
     float normalizedDepth = 0;
+    float hitU = 0.0f; // U coordinate along the wall (0-1)
+    float wallLength = 0.0f; // Physical length of the wall
 };
 
 CameraYLineData ComputeCameraYAxis(
@@ -65,6 +67,9 @@ float ComputeVerticalOffset(const RaycastingCamera& cam, uint32_t RenderTargetHe
 float ComputeElevationOffset(const RaycastingCamera& cam, const World& world, uint32_t RenderTargetHeight);
 
 void RenderCameraYLine(CameraYLineData renderData, Color color, bool topBorder = true, bool bottomBorder = false);
+void RenderCameraYLineTextured(CameraYLineData renderData, TextureID textureId, float textureScale, Color tint, bool topBorder = true, bool bottomBorder = false);
+void RenderFloorAndCeiling(RasterizeWorldContext& ctx, const Sector& sector, uint32_t x, const MinMaxUint32& yMinMax, float wallDistance);
+void RenderEntities(const World& world, const RaycastingCamera& cam, uint32_t renderTargetWidth, uint32_t renderTargetHeight);
 
 class WorldRasterizer
 {
