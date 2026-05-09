@@ -32,7 +32,7 @@ void SectorCreationTool::Update(float dt, WorldEditor& editor)
     // Press Enter to complete sector or check GUI button request
     if ((IsKeyPressed(KEY_ENTER) || completeSectorRequested) && points.size() >= 3)
     {
-        CompleteSector(editor.world);
+        CompleteSector(editor.GetWorld());
         completeSectorRequested = false;
     }
 
@@ -168,7 +168,7 @@ void SectorCreationTool::CompleteSector(World& world)
     SectorID newId = 0;
     if (!world.Sectors.empty())
     {
-        newId = world.Sectors.rbegin()->first + 1;
+        newId = world.Sectors.cbegin()->first + 1;
     }
     world.Sectors[newId] = newSector;
 

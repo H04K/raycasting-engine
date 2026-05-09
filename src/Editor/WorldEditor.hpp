@@ -42,6 +42,7 @@ public:
     Vector2 ScreenToViewportPosition(Vector2 pos) const;
     Vector2 ScreenToWorldPosition(Vector2 viewportPos) const;
 
+    World& GetWorld() { return world; }
 private:
     static void DrawCam(const RaycastingCamera& cam) ;
     void DrawBackgroundGrid() const;

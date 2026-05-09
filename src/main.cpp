@@ -14,6 +14,12 @@
 #include "Editor/RaycastingCameraViewport.hpp"
 #include "Editor/RenderingOrchestrator.hpp"
 #include "Editor/WorldEditor.hpp"
+#include "Editor/WallCreationTool.hpp"
+#include "Editor/PortalVisualizationTool.hpp"
+#include "Editor/ProjectCreatorUI.hpp"
+#include "Editor/SectorCreationTool.hpp"
+#include "Editor/SpriteEditor.hpp"
+#include "Editor/TextureBrowser.hpp"
 
 constexpr int DefaultScreenWidth = 1720;
 constexpr int DefaultScreenHeight = 880;
@@ -71,6 +77,13 @@ int main()
     RaycastingCameraViewport cameraViewport(1920, 1080);
     WorldEditor worldEditor(world, cam.position);
 
+    WallCreationTool wallCreationTool;
+    PortalVisualizationTool portalVisualizationTool;
+    ProjectCreatorUI projectCreatorUI;
+    SectorCreationTool sectorCreationTool;
+    SpriteEditor spriteEditor;
+    TextureBrowser textureBrowser;
+
     RenderingOrchestrator renderingOrchestrator(cameraViewport.GetRenderTexture());
 
     while (!WindowShouldClose())
@@ -108,13 +121,20 @@ int main()
         }
 
         worldEditor.Update(deltaTime);
-
+        portalVisualizationTool.Update(deltaTime, worldEditor);
+        sectorCreationTool.Update(deltaTime, worldEditor);
+        spriteEditor.Update(deltaTime, worldEditor);
+        wallCreationTool.Update(deltaTime, worldEditor);
         // Draw
 
         BeginDrawing();
             
             worldEditor.Render(cam);
             renderingOrchestrator.Render(world, cam);
+            portalVisualizationTool.Render(world);
+            sectorCreationTool.Render();
+            spriteEditor.Render(world);
+            wallCreationTool.Render();
 
             // Draw GUI
             
@@ -133,6 +153,13 @@ int main()
                     renderingOrchestrator.DrawGUI();
                 if(displayGuiStates.worldEditor)
                     worldEditor.DrawGUI();
+
+                portalVisualizationTool.DrawGUI();
+                sectorCreationTool.DrawGUI();
+                projectCreatorUI.DrawGUI();
+                spriteEditor.DrawGUI(world);
+                textureBrowser.DrawGUI();
+                wallCreationTool.DrawGUI();
 
             rlImGuiEnd();
 

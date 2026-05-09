@@ -31,7 +31,7 @@ void WallCreationTool::Update(float dt, WorldEditor& editor)
     // Finish drawing wall
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && isDrawing)
     {
-        CreateWall(editor.world);
+        CreateWall(editor.GetWorld());
         isDrawing = false;
     }
 

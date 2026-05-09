@@ -19,7 +19,7 @@ void PortalVisualizationTool::Update(float dt, WorldEditor& editor)
         SectorID closestSector = NULL_SECTOR;
         size_t closestWallIdx = 0;
 
-        for (auto& [sectorId, sector] : editor.world.Sectors)
+        for (auto& [sectorId, sector] : editor.GetWorld().Sectors)
         {
             for (size_t i = 0; i < sector.walls.size(); ++i)
             {
@@ -51,13 +51,13 @@ void PortalVisualizationTool::Update(float dt, WorldEditor& editor)
     // Handle GUI button requests
     if (createPortalRequested)
     {
-        CreatePortal(editor.world, selectedSectorId, selectedWallIndex, targetSectorId);
+        CreatePortal(editor.GetWorld(), selectedSectorId, selectedWallIndex, targetSectorId);
         createPortalRequested = false;
     }
 
     if (removePortalRequested)
     {
-        RemovePortal(editor.world, selectedSectorId, selectedWallIndex);
+        RemovePortal(editor.GetWorld(), selectedSectorId, selectedWallIndex);
         removePortalRequested = false;
     }
 }

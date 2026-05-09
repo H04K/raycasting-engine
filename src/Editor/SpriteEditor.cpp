@@ -14,7 +14,7 @@ void SpriteEditor::Update(float dt, WorldEditor& editor)
     // Left click to create entity
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        CreateEntity(editor.world, mouseWorld);
+        CreateEntity(editor.GetWorld(), mouseWorld);
     }
 
     // Right click to select entity (simple distance check)
@@ -23,7 +23,7 @@ void SpriteEditor::Update(float dt, WorldEditor& editor)
         float minDist = 50.0f;
         EntityID closest = NULL_ENTITY;
 
-        for (const auto& [id, entity] : editor.world.Entities)
+        for (const auto& [id, entity] : editor.GetWorld().Entities)
         {
             float dist = Vector2Distance(mouseWorld, entity.position);
             if (dist < minDist)
@@ -42,7 +42,7 @@ void SpriteEditor::Update(float dt, WorldEditor& editor)
     // Delete selected entity with Delete key
     if (IsKeyPressed(KEY_DELETE) && selectedEntityId != NULL_ENTITY)
     {
-        DeleteEntity(editor.world, selectedEntityId);
+        DeleteEntity(editor.GetWorld(), selectedEntityId);
     }
 }
 
